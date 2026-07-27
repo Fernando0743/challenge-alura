@@ -2,9 +2,8 @@ import os
 import streamlit as st
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_cohere import ChatCohere, CohereEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_cohere import ChatCohere
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -17,22 +16,33 @@ st.markdown("Haz preguntas en lenguaje natural sobre la arquitectura, precios, p
 
 cohere_api_key = os.environ.get("COHERE_API_KEY")
 
+if not cohere_api_key:
+    st.error("No se encontró la API Key de Cohere.")
+    st.stop()
 
 @st.cache_resource
 def inicializar_agente():
-
     dir_actual = os.path.dirname(os.path.abspath(__file__))
     
-
     pdf_path = os.path.join(dir_actual, "documento_saas.pdf")
-   
+    if not os.path.exists(pdf_path):
+        archivos = [f for f in os.listdir(dir_actual) if f.endswith('.pdf')]
+        if archivos:
+            pdf_path = os.path.join(dir_actual, archivos[0])
+        else:
+            st.error("No se encontró ningún archivo PDF en el repositorio.")
+            st.stop()
+
     loader = PyPDFLoader(pdf_path)
     docs = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     splits = text_splitter.split_documents(docs)
 
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings = CohereEmbeddings(
+        model="embed-multilingual-light-v3.0", 
+        cohere_api_key=cohere_api_key
+    )
     vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
@@ -56,6 +66,7 @@ def inicializar_agente():
     def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
 
+    # 6. Cadena RAG con LCEL
     chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
