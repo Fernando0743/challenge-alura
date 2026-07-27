@@ -3,12 +3,11 @@ import streamlit as st
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 from langchain_cohere import ChatCohere
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-
 
 st.set_page_config(page_title="Agente de Soporte - CloudPulse SaaS", page_icon="🤖")
 
@@ -21,21 +20,21 @@ cohere_api_key = os.environ.get("COHERE_API_KEY")
 
 @st.cache_resource
 def inicializar_agente():
-    pdf_path = "documento_saas.pdf"
+
+    dir_actual = os.path.dirname(os.path.abspath(__file__))
     
 
+    pdf_path = os.path.join(dir_actual, "documento_saas.pdf")
+   
     loader = PyPDFLoader(pdf_path)
     docs = loader.load()
-
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     splits = text_splitter.split_documents(docs)
 
-
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+    vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-
 
     llm = ChatCohere(
         model="command-r7b-12-2024", 
@@ -43,11 +42,10 @@ def inicializar_agente():
         temperature=0.2
     )
 
-
     system_prompt = (
         "Eres un asistente virtual experto de la plataforma SaaS CloudPulse.\n"
         "Responde a las preguntas utilizando únicamente la información proporcionada en el contexto.\n"
-        "Si no sabes la respuesta o no está en el documento, responde: 'No cuento con esa información en la documentación, ¿Alguna ptra pregunta?'.\n"
+        "Si no sabes la respuesta o no está en el documento, responde: 'No cuento con esa información en la documentación, ¿Alguna otra pregunta?'.\n"
         "Mantén tus respuestas profesionales, claras y directas.\n\n"
         "Contexto:\n{context}\n\n"
         "Pregunta: {question}"
