@@ -19,16 +19,7 @@ El agente es capaz de:
 ## 2. Arquitectura de la Solución
 
 La solución utiliza una arquitectura **RAG (Retrieval-Augmented Generation)** ligera y de alto rendimiento optimizada para entornos Cloud sin consumo excesivo de memoria:
-graph LR
-    PDF["[ Documento PDF ]"] --> Loader["[ PyPDFLoader & TextSplitter ]"]
-    Loader --> Chunks["[ Chunks de Texto ]"]
-    
-    Embeddings["[ Cohere Embeddings ]"] --> Retriever["[ FAISS Retriever ]"]
-    Retriever --> LLM["[ ChatCohere (Command-R) ]"]
-    LLM --> UI["[ Interfaz Streamlit ]"]
 
-    Chunks -. Contexto .-> Retriever
-  
 1. **Ingesta de Documentos:** El PDF con la especificación de CloudPulse es cargado mediante `PyPDFLoader` y dividido en fragmentos (*chunks*) utilizando `RecursiveCharacterTextSplitter`.
 2. **Vectorización (Embeddings):** Los fragmentos son convertidos en vectores de alta dimensión mediante la API de `CohereEmbeddings` (`embed-multilingual-light-v3.0`), eliminando la carga computacional local.
 3. **Almacenamiento Vectorial:** Se utiliza **FAISS** como base de datos vectorial en memoria por su velocidad y bajo consumo de recursos.
@@ -127,14 +118,14 @@ Prueba del agente respondiendo sobre tecnologías del backend (Python y Go).
 ### Ejemplo 2: Consulta sobre Precios y Soporte
 Prueba del agente respondiendo sobre costos del plan Pro y nivel de soporte técnico.
 
-![Consulta sobre Precios](ruta/a/tu/captura-ejemplo2.png)
+![Consulta sobre Precios](imgs/pruebas_2y3.png)
 
 ---
 
 ### Ejemplo 3: Pregunta Fuera de Contexto
 Prueba del control de alucinaciones respondiendo correctamente ante información no disponible en el documento.
 
-![Consulta Fuera de Contexto](ruta/a/tu/captura-ejemplo3.png)
+![Consulta Fuera de Contexto](imgs/render_ejecutado.png)
 
 ## Evidencia del Despliegue en la Nube
 
