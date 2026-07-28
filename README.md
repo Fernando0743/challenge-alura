@@ -136,7 +136,7 @@ El proyecto fue desplegado con éxito en la plataforma **Render** utilizando int
 
 > **Nota:** El estado **`Live`** confirma que el Web Service fue construido, configurado y ejecutado exitosamente en los servidores de Render.
 
-- **Enlace Público de la Aplicación en Render:** [https://challenge-alura-jhd3.onrender.com]
+- **Enlace Público de la Aplicación en Render:** https://challenge-alura-jhd3.onrender.com
 
 ---
 
