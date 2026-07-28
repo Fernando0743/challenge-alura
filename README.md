@@ -111,25 +111,30 @@ A continuación se muestran los casos de prueba ejecutados en la aplicación des
 ### Ejemplo 1: Consulta sobre Arquitectura
 Prueba del agente respondiendo sobre tecnologías del backend (Python y Go).
 
-![Consulta sobre Arquitectura](ruta/a/tu/captura-ejemplo1.png)
+![Consulta sobre Arquitectura](imgs/prueba_1.png)
 
 ---
 
 ### Ejemplo 2: Consulta sobre Precios y Soporte
 Prueba del agente respondiendo sobre costos del plan Pro y nivel de soporte técnico.
 
-![Consulta sobre Precios](imgs/pruebas_2y3.png)
+![Consulta sobre Precios](imgs/prueba_2.png)
 
 ---
 
 ### Ejemplo 3: Pregunta Fuera de Contexto
 Prueba del control de alucinaciones respondiendo correctamente ante información no disponible en el documento.
 
-![Consulta Fuera de Contexto](imgs/render_ejecutado.png)
+![Consulta Fuera de Contexto](imgs/prueba_3.png)
 
 ## Evidencia del Despliegue en la Nube
 
 El proyecto fue desplegado con éxito en la plataforma **Render** utilizando integración continua desde GitHub y variables de entorno para la gestión segura de claves.
+
+### Status del Servicio en Render
+![Estado del Despliegue en Render](imgs/render_ejecutado.png)
+
+> **Nota:** El estado **`Live`** confirma que el Web Service fue construido, configurado y ejecutado exitosamente en los servidores de Render.
 
 - **Enlace Público de la Aplicación en Render:** [https://challenge-alura-jhd3.onrender.com]
 
